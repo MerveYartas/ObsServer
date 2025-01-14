@@ -1,1 +1,99 @@
 # ObsServer
+
+
+CREATE FUNCTION dbo.HesaplaGenelNot (@Vize INT, @Final INT)
+RETURNS FLOAT
+AS
+BEGIN
+    -- NULL kontrolü ekleyelim
+    IF @Vize IS NULL OR @Final IS NULL
+        RETURN NULL;
+    RETURN (@Vize * 0.4) + (@Final * 0.6);
+END;
+
+--Select dbo.HesaplaGenelNot(40, 60) 
+go
+CREATE FUNCTION dbo.HesaplaHarfNotu (@GenelNot FLOAT)
+RETURNS NVARCHAR(2)
+AS
+BEGIN
+    IF @GenelNot IS NULL
+        RETURN NULL;  -- NULL gelen genel not için NULL döndürebiliriz
+        
+    RETURN 
+        CASE 
+            WHEN @GenelNot >= 90 THEN 'AA'
+            WHEN @GenelNot >= 80 THEN 'BA'
+            WHEN @GenelNot >= 70 THEN 'BB'
+            WHEN @GenelNot >= 60 THEN 'CB'
+            WHEN @GenelNot >= 50 THEN 'CC'
+            ELSE 'FF'
+        END;
+END;
+go 
+--Select dbo.HesaplaHarfNotu(91)
+
+CREATE PROCEDURE dbo.GetirOgrenciNoIleDersNotlari
+    @OgrenciNo VARCHAR(10) -- Belirli bir öğrenci numarası için arama
+AS
+BEGIN
+    -- Geçici tablo oluşturma
+    CREATE TABLE #GuncellemeSonuclari (
+        OgrenciNo VARCHAR(10),
+        DersKodu NVARCHAR(50),
+        Vize INT,
+        Final INT,
+        Ortalama FLOAT,
+        HarfNotu NVARCHAR(2)
+    );
+
+    DECLARE @DersKodu NVARCHAR(50), @Vize INT, @Final INT, @Ortalama FLOAT, @HarfNotu NVARCHAR(2);
+
+    -- Cursor tanımlama
+    DECLARE OgrenciCursor CURSOR FOR
+    SELECT DersKodu, Vize, Final
+    FROM OgrenciDersler
+    WHERE OgrenciNo = @OgrenciNo;
+
+    OPEN OgrenciCursor;
+
+    FETCH NEXT FROM OgrenciCursor INTO @DersKodu, @Vize, @Final;
+
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        -- Genel not ve harf notu hesaplama
+        SET @Ortalama = dbo.HesaplaGenelNot(@Vize, @Final);
+        SET @HarfNotu = dbo.HesaplaHarfNotu(@Ortalama);
+
+        -- Geçici tabloya ekleme
+        INSERT INTO #GuncellemeSonuclari (OgrenciNo, DersKodu, Vize, Final, Ortalama, HarfNotu)
+        VALUES (@OgrenciNo, @DersKodu, @Vize, @Final, @Ortalama, @HarfNotu);
+
+        -- Bir sonraki kaydı al
+        FETCH NEXT FROM OgrenciCursor INTO @DersKodu, @Vize, @Final;
+    END;
+
+    CLOSE OgrenciCursor;
+    DEALLOCATE OgrenciCursor;
+
+    -- Geçici tablodan sonuçları döndürme
+    SELECT * FROM #GuncellemeSonuclari;
+
+    -- Geçici tabloyu temizleme
+    DROP TABLE #GuncellemeSonuclari;
+END;
+GO
+
+
+EXEC dbo.GetirOgrenciNoIleDersNotlari @OgrenciNo = 'O2' ;
+
+EXEC dbo.GetirOgrenciNoIleDersNotlari @OgrenciNo = NULL;
+
+
+Select * from OgrenciDersler
+
+
+
+
+
+
