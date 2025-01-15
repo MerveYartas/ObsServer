@@ -1,0 +1,120 @@
+//React Native
+
+//1) View => gövde etiketlerimiz için.
+
+//2) Text => Metin girişi yapmamızı sağlayan etiket
+
+//3) Props:Çoğu birleşen farklı farklı parametreler ile özelleştirilebilir. Bu parametrelere PROPS demir.
+
+//4)Bir React bileşeninde, props'lar bir üst bileşenden bir alt bileşene geçirdiğimiz değişkenlerdir.
+Benzer şekilde, state'ler de değişkenlerdir, ancak bunlar parametre olarak geçirilmez, bunun yerine bileşen bunları dahili olarak başlatır ve yönetir.
+
+//5)REACT JS / REACT NATİVE Koddaki bazı farklılıklar
+
+import React, {useState} from 'react';										
+const App = () => {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div className="container">
+      <p>You clicked {count} times</p>
+      <button
+        onClick={() => setCount(count + 1)}>
+        Click me!
+      </button>
+    </div>
+  );
+};
+
+
+// CSS
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// React Native Counter Example using Hooks!
+
+import React, {useState} from 'react';
+import {View, Text, Button, StyleSheet} from 'react-native';
+
+const App = () => {
+  const [count, setCount] = useState(0);
+
+  return (
+    <View style={styles.container}>
+      <Text>You clicked {count} times</Text>
+      <Button
+        onPress={() => setCount(count + 1)} //Mesela burada onClick yerine onPress Yazmışız
+        title="Click me!"
+      />
+    </View>
+  );
+};
+
+// React Native Styles
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+
+//6) React Native ile, platformunuzun API'lerine erişmek ve React bileşenlerini kullanarak kullanıcı arayüzünüzün görünümünü ve davranışını tanımlamak için JavaScript kullanırsınız: 
+yeniden kullanılabilir, iç içe geçirilebilir kod paketleri. 
+
+//7) 
+//React              Native UI Bileşeni	Android Görünümü	 iOS Görünümü	    Web Analog Tanım
+//<View>                 <ViewGroup>	          <UIView>	Kaydırmayan<div>	  Esnek kutu, stil, bazı dokunmatik işleme ve erişilebilirlik denetimleriyle düzeni destekleyen bir kapsayıcı
+//<Text>	            <TextView>	         <UITextView>	    <p>	        Metin dizelerini görüntüler, biçimlendirir ve iç içe yerleştirir ve hatta dokunmatik olayları işler
+//<Image>	           <ImageView>	          <UIImageView>	    <img>	        Farklı türde görseller görüntüler
+//<ScrollView>	    <ScrollView>	         <UIScrollView>	    <div>    	  Birden fazla bileşen ve görünüm içerebilen genel bir kaydırma kabı
+//<TextInput>      	     <EditText>	         <UITextField>	<input type="text"> Kullanıcının metin girmesine izin verir
+
+//8) const Cat = () => {}; :Bir fonksiyon tanımlama
+
+//9) Fonksiyon bileşeninizi JavaScript'lerle birlikte uygulamanızın her yerinde kullanmak üzere şu şekilde dışa aktarabilirsiniz : export default Cat;
+
+//10)
+import React from 'react';
+import {Text} from 'react-native';
+
+const getFullName = ( //fonksiyonumuza parametre isteği yazıyoruz
+  firstName: string,
+  secondName: string,
+  thirdName: string,
+) => {
+  return firstName + ' ' + secondName + ' ' + thirdName;
+};
+
+const Cat = () => {
+  return <Text>Hello, I am {getFullName('Rum', 'Tum', 'Tugger')}!</Text>; // daha sonra bu fonsiyonda diğer fonksiyonumuza parametre yollayıp yazdırıyorum
+};
+
+export default Cat;
+
+//11) useState: iki öenemli özelliği var birincisi 'başlangıç değerini tutar' ikincisi 'fonksiyon vb. kullanarak özelliği değiştirir' bunu ayarlamak için 'setName' kullanılır
+
+
+
+
+
+
+https://reactnative.dev/docs/environment-setup
+
+https://www.youtube.com/watch?v=U1DYQ8aB8KQ&list=PL_G_gS1lEdc0O3YxRWwfnFWygKr_71JbB&index=1     Proje açma sonra vs codeda aç dosyayı
+
+https://www.youtube.com/watch?v=QQPvlM86kJg&list=PL_G_gS1lEdc0O3YxRWwfnFWygKr_71JbB&index=3      burdada projeyi kaldırmayı gösteriyor
+
+https://www.youtube.com/playlist?list=PLZFrBLNgbT_nv3et1ffaAspHIe8ds-ceX      Ders konularını anlatan oynatma listesi
+
+https://www.youtube.com/playlist?list=PL08oc4fWsuu_s1IeY0Gc31OQCRAMMsilr modern todo list
+
+
+https://www.youtube.com/playlist?list=PLXuv2PShkuHyyRQmZlty28LvXEGLp7pWy  Asp.net MVC 5 Konu anlatımı
+
+
+
+
