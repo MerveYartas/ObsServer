@@ -1,0 +1,100 @@
+Geçici bir tablo oluşturmak için;
+create table #ogrenci isleri(
+adi varchar(30),
+soyadi varchar(20),
+ortalama int
+);
+
+---------------------------------------------------------------------------------------------
+
+Bir fonksiyon yazmak için;
+create function dbo.FullName(@adi varchar(30), @soyadi varchar(20))
+returns varchar(51)
+as
+begin
+	return (adi+ space(1) + soyadi);
+end
+
+Select dbo.FullName(Merve, Yartaş) => Fonk. çağırmak için select kullanırız
+
+----------------------------------------------------------------------------------------------------------
+
+Bir toplama işlemi yapan ve gelen sonucu başka bir fonksiyonda 50 den büyükse büyük küçükse küçük yazan fonk.
+
+Create function dbo.Topla(@sayi1 int, @sayi2 int)
+returns int
+as
+begin
+	return (@sayi1 + @sayi2)
+end 
+
+
+Create function dbo.ellidenbuyukmu(@toplam int)
+returns varchar(20)
+as
+begin
+	return
+		case
+			when @toplam > 50 then 'Büyüktür'
+			when @toplam <50 then 'Küçüktür'
+			else 'eşittir'
+		end;
+end
+
+set @toplam = dbo.Topla(25+26)
+Select dbo.ellidenbuyukmu(@toplam)
+
+------------------------------------------------------------------------------------------------------------
+
+İki tablomuz olsun biri fatura detay biri faturalar
+
+İnner join ile: Select * from faturalar inner join faturaDetay on faturalar.faturaİd = faturaDetay.faturaİd dersek bu kod bize iki tablonun kesişen verisini getirir
+
+Left join ile: Select * from faturalar left join  faturaDetay on faturalar.faturaİd = faturaDetay.faturaİd dersek bu kod bize soldaki faturalar tablosunu komple getirir ve fatura detayında kesişen kısmını getirir
+
+Right Join ile: Select * from faturalar right join faturaDetay on faturalar.faturaİd = faturaDetay.faturaİd dersek bu kod bize sağdaki faturaDetayın hepsini komple getirir ve faturalarda sadece kesişen kısım gelir.
+
+Bu mantıkla bakacak olursak full joinde her şeyi getirir eğer gelen kayıtlarda  eşleşme yoksa oralar null olur
+
+
+-------------------------------------------------------------------------------------------------------
+
+Müsteri numarasına göre ne kadar aldığı malın cinsi ve toplam tutarını listeleyen procedure 
+create procedure dbo.MusteriBilgisi @faturaNo int
+as
+begin 
+	create table #faturaBilgisi(
+	musteriNo int,
+	msuteriAdı varchar(20),
+	urunCinsi varchar(10),
+	TopTut int
+	);
+
+	Declare @musteriNo int, @musteriAdi varchar(20), @urunCinsi varchar(10), @TopTut int;
+
+	Declare faturaCursor CURSOR for
+	Select musteriAdi, urunCinsi, topTut from Faturalar where musteriNo = @musteriNo;
+	
+	Open faturaCursor;
+
+	WHILE @@FETCH_STATUS = 0
+    		BEGIN
+
+		Fetch next from faturaCursor ınto @musteriAdi, @urunCinsi, @TopTut;
+		Insert into #faturaBilgisi (musteriNo, musteriAdi,urunCinsi,TopTut) values (@musteriNo, @musteriAdi,@urunCinsi,@TopTut);
+
+		Fetch next from faturaCursor Into @musteriAdi,@urunCinsi,@TopTut
+		end
+	CLOSE faturaCursor;
+      DEALLOCATE faturaCursor;
+
+    -- Geçici tablodan sonuçları döndürme
+    SELECT * FROM #faturaBilgisi;
+
+    -- Geçici tabloyu temizleme
+    DROP TABLE #FaturaBilgisi;
+end
+
+
+
+
