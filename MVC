@@ -1,0 +1,30 @@
+
+ASP.NET MVC
+
+Model => Sınıflarımız vb.
+
+View => Görüntüleme yapmak için 
+
+Controls => Veri tabanına gidip modele gidip kayıtlarını ekliyor.(Model ve view katmanlarını yönetir)
+
+asp.net web app => projesinde başlat uygulamayı. Daha sonra MVC seçip devam et .
+
+Controls klasörümde actionlarım var. İsteklerimi karşılayan kısım action methotları. HER CONTROLÜN defauld methodu "index".
+
+Layout: Bizim içerik kısmımızın düzeni denilebilir aslında. Layout, Türkçe'de sayfa düzeni anlamına gelir.
+--Kitap, dergi, gazete gibi basılı ortamda sayfa düzeni, metin ve görsellerin sayfa üzerindeki yerleşimlerini belirtir.
+--Dijital ortamda ise sayfa düzeni, web sayfalarındaki öğelerin yerleşimi ile ilgilidir.
+
+Razor Snytax: Html sayfalarında c# kodları yazabiliriz. Mesela Html etiketleri içinde if else kullanımı. @{ }
+
+viewBag ve viewData: Bu nesneler controller üzerinden view yapısına çeşitli verileri iletmek için kullanılır.
+
+Helper Methotları; DisplayNamefor => ismine ulaşırız. Displayfor=> 
+
+Partial view:view içeriğinin bir bölümünü işleyen özel bir view türüdür. Partial View'ler, View'lerinizi bölümlerden oluşmasına imkan sağlayan yapılardır.
+
+HttpGet ve HttpPost: Getirme ve görüntüleme
+
+
+
+https://www.youtube.com/watch?v=1D-vOoso0oQ&list=PLKnjBHu2xXNP6Qa6u8GLawPnzo1brHZPP sql server çalışma listesi
