@@ -1,0 +1,328 @@
+
+
+-- SQL
+-- T-SQL (Microsoft - Sysbase)
+-- PL-SQL (Oracle - PstgreSQL)
+--sys.Objects => veritabanndaki tüm nesnelerin bilgilerini tutar.
+--sys.indexes => vritabanındaki indexler hakkında bilgi sağlar
+--sys.columns => veritabanındaki tüm tabloların sütünlarıyla ilgili bilgileri tutar
+--sys.triggers => VERİTABANINDAKİ TRİGGERLARIN BİLGİLERİNİ TUTAR
+--sys.tables => VERİTABANINDAKİ TABLOLARIN BİLGİLERİNİ TUTAR
+--@@RowCount => EN SON TETİKLENEN SORGUNUN ETKİLEDİĞİ SATIR SAYISINI DÖNER
+--TABLO KİMLİĞİ SORGULAMA object_id
+SELECT object_id('Deneme')
+
+
+--SELECT INTO VERİ KOPYALAMA => PERSONEL TABLOSUNDAKİ VERİLER PERSONELYEDEK TABLOSUNA KOPYALANIR
+--PERSONEL YEDEK DAHA ÖNCEDEN OLUŞTURULMADIYSA SQL SERVER TABLOYU OTOMATİK OLUŞTURUR
+Select * INTO PersonelYedek from Personel as p;
+
+
+--TRUNCATE TABLODAKİ VERİLERİ SİLER TABLO YAPISINI KORUR
+-- ANCAK OTOMATİK ARTAN SÜTUNUNU SIFIRLAMAZ 
+TRUNCATE Table Personel; 
+
+--OTOMATİK ARTAN SÜTUNUNU SIFIRLAMAK İÇİN 
+DBCC CHECKIDENT ('Personel', RESEED, 1);
+
+--OTOMATİK ARTAN SÜTUNUNA MANUAL VERİ EKLEMEYE İZİN VERİR
+SET IDENTITY_INSERT dbo.Personel ON;
+--KAPATMAK İÇİN
+SET IDENTITY_INSERT dbo.Personel OFF;
+
+
+--GETDATE MEVCUT TARİH VE SAATİ EKLER
+Insert into Personel VALUES('S5', '357', 'Zeliha', 'Koş', 'K', '2000-05-25', 35000, 'D1', GetDate());
+
+
+
+
+--VİEW(SANAL TABLO) OLUŞTURMA
+if Exists (Select * From sys.objects Where name ='vPersonelListe' and Type = 'V')
+	Drop View vPersonelListe
+go
+Create view vPersonelListe
+AS
+Select p.*, d.DAdi as DepAdi From Personel p 
+Left Join Departman d On d.DKodu = p.DKodu
+go
+
+
+
+--TRİGER =>  VERİTABANINDA GERÇEKLEŞEN  BELİRLİ BİR OLAY GERÇEKLEŞTİĞİNDE OTOMATİK OLARAK ÇALIŞAN (TETİKLENEN) BİR TÜR PROSEDÜRDÜR. 
+--İŞLEM YAPILMADAN TETİKLENE TRİGGER =>BEFORE
+--İŞLEMİN YERİNE GEÇEBİLECEK TRİGGER
+CREATE TRIGGER trg_InsteadOfInsert
+ON Personel
+INSTEAD OF INSERT-- INSERT İŞLEMİ YERİNE BU TRİGER KULLANILABİLİR
+AS
+BEGIN
+    PRINT 'INSERT işlemi yerine başka bir işlem yapılıyor';
+END;
+
+
+--İŞLEMDEN SONRA TETİKLENEN TRİGGER
+Create Trigger trPersonelDelete ON Personel
+After Delete-- /INSERT / UPDATE VEYA BİR TRİGERDA ÜÇÜ BİRDEN OLABİLİR
+as
+Begin
+	Declare @dkodu_d varchar(5)
+	SET @dkodu_d = (Select d.DKodu from deleted d)
+	Update Departman Set PerSayisi = PerSayisi - 1 WHERE DKodu = @dkodu_d
+END
+
+--TRİGGER DEVRE DIŞI BIRAKMA
+Alter Table Personel
+Disable Trigger trPersonelInsert;
+
+
+--TRİGGER ETKİNLEŞTİRME
+Alter Table Personel
+Enable Trigger trPersonelDML;
+
+
+--TRİGGER SİLME
+Drop Trigger trPersonelDelete;
+
+
+
+
+
+--TRANSACTİON (İŞLEM) => BİR DİZİ SQL KOMUTUNUN BİR BÜTÜN OLARAK ÇALIŞTIRILMASI İÇİN KULLANILAN YAPI
+--İŞLEMİ BAŞLATMAK İÇİN
+Begin Tran -- BU KOMUT İLE O ANDAN İTİBAREN YAPILAN DEĞİŞİKLİKLERİN TRANSACTİON İÇİNDE YAPILDIĞI KABUL EDİLİR
+
+-- VERİNİN KALICI MI OLACAĞINI YADA SİLİNECEĞİNİ BELİRLEME
+if(Select Count(*) from Departman) <= 11
+    COMMIT TRAN -- İŞLENEN KAYIT 11'E EŞİT VEYA KÜÇÜKSE => KALICI HALE GELİR
+else
+    RollBack Tran-- DEĞİLSE SİLİNİR
+
+
+
+
+--PROCEDUR TANIMI
+DROP PROC if exists  sp_DepartmanEkle --PROC YADA PROCEDURE
+go
+
+Create PROC sp_DepartmanEkle @dkodu varchar(5), @depadi varchar(50), @out_id int out--OUTPUT OLANLAR BELİRTİLMEK ZORUNDADIR
+AS
+BEGIN
+		-- İŞLEMLER BURADA YAZILIR
+END
+Go
+
+
+
+--CURSOR => SORGUDAN DÖNEN SONUÇ KÜMESİNİ SATIR SATIR İŞLEMEK İÇİN KULLANILIR
+Declare crs_triggers CURSOR For  Select tt.tablename, tt.name as triggername, 
+								  tt.is_disabled, tt.is_not_for_replication, 
+								  tt.is_instead_of_trigger   
+								  from #temptriggers tt
+Open crs_triggers
+
+FETCH NEXT FROM crs_triggers into @x_table, @x_trigger, @x_disable, @x_replication,@x_insteadof
+
+While(@@FETCH_STATUS = 0)-- HER BİR FETCH İŞLEMİNİ DURUMUNU KONTROL ETMEK İÇİN KULLANILIR
+Begin					 -- 0    => FETCH İŞLEMİ BAŞARILI
+	--İŞLEMLER			   (-1)  => FETCH İŞLEMİ SIRASINDA BİR HATA OLUŞTU VEYA SATIR YOK
+						 -- (-2) => FETCH İŞLEMİ SIRASINDA BELİRTİLEN SATIR EKSİK
+
+FETCH NEXT FROM crs_triggers into @x_table, @x_trigger, @x_disable, @x_replication,@x_insteadof
+END
+
+--CURSORU AÇMAK İÇİN
+OPEN crs_triggers
+
+--CURSOR DEN SIRADAKİ SATIRI ALMAK İÇİN
+FETCH NEXT FROM crs_triggers
+
+--CURSORU KAPATMAK İÇİN
+CLOSE crspers -- CURSOR KAPANDI : ANCAK KULLANIMA HAZIR BİR ŞEKİLDE HAFIZADA DURUYOR
+DEALLOCATE crspers -- CURSOR NESNESİNİ YOK EDER (HAFIZADAN - RAM'DEN SİLER)
+
+
+
+
+--ALTER TABLE
+Alter Table Personel
+Add TcNo char(11) Constraint UQ_Personel_TcNo UNIQUE NOT NULL
+                  References Departments(Depcode) --TABLO İLİŞKİLENDİRME (FORİGN KEY)
+
+
+--CREATE TABLE
+Create Table Departman(
+	Id int constraint PK_Departman_Id Primary key Identity(1, 1),
+	DKodu Varchar(10) Constraint UQ_Departman_DKodu UNIQUE Not Null,
+	DAdi Varchar(50) INDEX IX_Departman_DAdi NONCLUSTERED  (DAdi)  
+)
+
+
+--INSERT INTO
+Insert Into Departman Values ('D2', 'Bilgi İşlem')
+	
+Insert into Departman (DAdi, DKodu) Values ('Üretim Planlama', 'D4'),
+												('Satış ve Pazarlama', 'D5'),
+												('AR-', 'D6')
+
+
+--UPDATE
+--LIKE KARŞILAŞTIRMA 
+Update Departman Set DAdi = 'AR-GE' -- Bütün Departman isimleri AR-GE olur
+Update Departman Set DAdi = 'AR-GE'  Where DAdi = 'AR-'; -- DAdi "AR-"  eşit olan kayıları günceller 
+Update Departman Set DAdi = 'AR-GE'  Where DAdi LIKE 'AR%' -- DAdi AR ile başlayan Kayıtları Günceller	
+
+--LEFT JOIN KULLNIMI
+ Select p.*, d.DAdi as DepAdi From Personel p Left Join Departman d On d.DKodu = p.DKodu
+	Where p.DKodu = @depkodu Or p.DKodu is null 
+
+
+
+--DECLARE DEĞİŞKEN TANIMLAMA
+--Değişken ifadelerinin başında : @ ifadesi olacak
+-- Sistem Değişkenlerinin başında: @@ ifadesi olur
+Declare @depsayisi int,
+		@persayisi int, 
+		@a float,
+		@depcode varchar(5),
+		@n int = 9, 
+		@i int = 1
+
+
+
+
+--SET(TEK DEĞİŞKENE) SELCTE(BİRDEN FAZLA DEĞİŞKENE) DEĞER ATAMA
+SET @a = 12.55;
+Select @depsayisi = 3, @persayisi = 55
+
+
+--DEĞİŞKENE ALT SORGUYLA DEĞER ATAMA
+--COUNT(*)  belirtilen tablodaki toplam kayıt sayısını döndürür.
+SET @depsayisi = (Select Count(*) From Departman)
+
+
+--PRİNT EKRANE ÇIKTI VERMEK İÇİN 
+--CAST(TİPİ DEĞİŞECEK DEĞİŞKEN AS DEĞİŞECEK TİP) 
+--CONVERT(DEĞİŞECEK TİP , DEĞİŞKEN)
+print 'Dep Sayısı: ' + CAST (@depsayisi as Varchar)
+print 'Kişinin Maaşı: ' + Convert(varchar(20), @maas) +
+      ' YAŞ: ' + Cast(@yas as varchar)
+
+
+
+
+
+
+
+--İF KULLANIMI
+-- EĞER DENEME TABLOSU VARSA TABLOYU SİL YOKSA MESAJ VER
+		if Exists (	select * from sys.objects Where type = 'U' and name = 'Deneme')
+		Begin
+			--İŞLEMLER
+		END
+		else
+			--İŞLEMLER
+--YADA
+		Create function fn_dortislem(@s1 real, @s2 real, @islem varchar(5)) returns real
+		As
+		Begin
+			Declare @sonuc real
+			if(@islem = '+')
+				SET @sonuc = @s1 + @s2
+			else
+			if(@islem = '-')
+				SET @sonuc = @s1 - @s2
+			return @sonuc
+		end
+
+
+--WHİLE DÖNGÜ
+while(@i <= @n)
+Begin -- {
+	--İŞLEMLER
+END -- }
+
+
+
+--Fonksiyon tanımlama
+--DROP Function if exists fn_DepartmanaGorePersonel
+if exists(Select * from sys.objects WHERE name = 'fn_adbirlestir' and type = 'FN' )
+Drop function fn_adbirlestir
+go
+Create function fn_adbirlestir(@ad varchar(25), @soyad varchar(25))--PARAMETRE ALIR 
+Returns Varchar(51) -- GERİ DÖNÜŞ TİPİ
+AS
+Begin
+	Set @ad = LOWER(@ad)-- ertuğrul --LOWER() HEPSİNİ KÜÇÜK YAZ
+	Set @ad = UPPER(LEFT(@ad,1)) + --UPPER() HEPSİNİ BÜYÜK YAZ  , LEFT(DEĞİŞKEN,KAÇINCI HALFİ) AD DEĞİŞKENİNİN 1 HALFİNİ SEÇ => LEFT(@ad,1)
+			  SUBSTRING(@ad, 2, LEN(@ad)-1) --SUBSTRING(DEĞİŞKEN, başlangıç, uzunluk) @ad'I 2.Cİ HALFTEN BAŞLA HEPSİNİ AL
+
+	return @ad + '-' + UPPER(@soyad)
+END
+Go
+
+--FONKSİYON ÇAĞIRMA
+Select dbo.fn_adbirlestir('aLi', 'DuMaN') as adsoyad
+
+
+
+--YEREL TEMP => #
+--GENEL TEMP => ##
+--TEMP(GEÇİCİ TABLO OLUŞTURMA , Sadece ilgili Connection - Bağlantı Üzerinde Aktif olur)
+CREATE TABLE #TempTable (
+    ID INT,
+    name NVARCHAR(50),
+    Salary DECIMAL(10, 2)
+);
+--TEMP TABLOYU ÇAGIRMA
+select * from #TempTable;
+--TEMP TABLOYU BAŞKA BİR TABLO İLE ÇAĞIRMA
+Select * into #TempTable from Personel 
+--TEMP DE INDEX TANIMLAMA
+--INDEX, tabloyu taramak yerine doğrudan ilgili satırlara ulaşır.
+Create INDEX #myTempTable_name On #TempTable(name);
+
+
+
+
+--RAND RASTGELE SAYI ÜRETME (0 VE 1(DAHİL DEĞİL) ARASINDA)
+SELECT RAND()
+
+
+--BELLİ BİR SAYI ARALIĞINDA RASGELE SAYI ÜRETME 
+--SELECT RAND()*(Max-Min)+ Min;
+ Select @rnd = RAND() * (100 - 20) + 20; --100(DAHİL DEĞİL) İLE 20(DAHİL) ARASINDA
+
+
+ --ROUND VİRGÜLDEN SONRA KAÇ BASAMAGIN GÖZÜKECEĞİ
+ --ROUND(SAYI / DEĞİŞKEN , GÖZÜKECEK BASAMAK SAYISI)
+ --CEILING YUKARI YUVARLAR
+ --FLOOR AŞAĞI YUVARLAR
+Select 55.74985 as sonuc, Round(55.74985, 2) as round_2, 
+						  CEILING(55.74985) as ceiling_sonuc,
+						  FLOOR(55.74985) as floor_sonuc
+
+
+
+-- TOP SAYI (SAYI KADAR KAYIT GETİR)  ,  ORDER BY NEWİD()  TABLODAN RASGELE BİR KAYIT SEÇMEK İÇİN
+Select TOP 1 depcode from Categories Order By newid()
+
+
+
+--TRIM BAŞINDAKİ VE SONUNDAKİ BOŞLUKLARI SİLER
+SELECT TRIM('   Hello World   ') AS TrimmedText;
+
+
+
+--CHARINDEX DEĞİŞKEN İÇERİSİNDE BELİRLİ BİR HARF VEYA KELİMENİN İNDEXİNİ BULMA
+Declare @metin Varchar(50) = 'Select * from personel'
+Select CHARINDEX('c', @metin) as sonuc_charindex_nasilsin_in_metin  -- @metin İÇERİNDE c KAÇINCI HARHF  ÇIKTI => 5
+Select CHARINDEX('personel', @metin) as sonuc_charindex_A_in_metin  -- PERSONEL KELİMESİ KAÇINCI HARFTE BAŞLIYOR ÇIKTI => 15
+
+
+
+--EXEC , EXECUTE DEĞİŞKENLER İÇERİSİNDEKİ SQL SORGULARINI ÇALIŞTIRIR İKİSİDE AYNIDIR BİRİ KISA İSMİDİR
+DECLARE @PERSONEL VARCHAR(200)
+SET @PERSONEL ='SELECT * FROM PERSONEL'
+EXEC(@PERSONEL)  --ÇIKTI => PERSONEL TABLOSUNU EKRANA YAZDIRIR
+EXECUTE(@PERSONEL) -- YUKARIDAKİNİN AYNISI
