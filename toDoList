@@ -1,0 +1,177 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics.Tracing;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int sayi = -1;
+            Console.WriteLine("To-Do List");
+            List<string> toDoList = new List<string>();
+
+            bool bitis = true;
+            while (bitis)
+            {
+                Console.Write("Yapmak istediğiniz işlemi seçiniz:\n 1-)To-do Görüntüleme\n 2-) To-do Ekleme\n 3-) To-do Silme\n 4-) To-do Güncelleme\n İşlemin Numarasını Giriniz: ");
+                string islem = Console.ReadLine();
+                if (islem == "1")
+                {
+                    Console.WriteLine();
+                    if (toDoList.Count() == 0)
+                    {
+                        Console.WriteLine("-----------------------------------------------------------");
+                    }
+                    if (toDoList.Count() == 0)
+                    {
+                        Console.WriteLine("Bu to-do BOŞTUR.");
+                    }
+                    foreach (var item in toDoList)
+                    {
+                        if (toDoList.Count() != 0)
+                        {
+                            Console.WriteLine("-----------------------------------------------------------");
+                        }
+                        Console.WriteLine(item);
+                    }
+                    Console.WriteLine("-----------------------------------------------------------");
+                    Console.WriteLine();
+                }
+                else if (islem == "2")
+                {
+                    //int sayi = -1;
+                    bool devam = true;
+                    while (devam)
+                    {
+                        int sayi2 = sayi + 1;
+                        Console.WriteLine();
+                        Console.Write("Tarih: ");
+                        string date = Console.ReadLine();
+                        Console.Write("Başlık: ");
+                        string title = Console.ReadLine();
+                        Console.Write("Yapılacak: ");
+                        string body = Console.ReadLine();
+
+
+                        string toDo = $"id:{sayi2} '{date}'    <<{title}>>         {body}";
+                        toDoList.Add(toDo);
+                        sayi = sayi2;
+
+
+                        bool hata = true;
+                        while (hata)
+                        {
+                            Console.Write("Devam etmek istiyor musunuz? ");
+                            string cvp = Console.ReadLine();
+                            if (cvp.ToLower() == "hayır")
+                            {
+                                devam = false;
+                                Console.WriteLine();
+                                Console.WriteLine("Tarih        Başlık          Yapılacaklar");
+                                for (int i = 0; i < toDoList.Count; i++)
+                                {
+                                    Console.WriteLine("------------------------------------------------------------");
+                                    Console.WriteLine(toDoList[i]);
+                                }
+                                Console.WriteLine("------------------------------------------------------------");
+                                Console.WriteLine();
+                                hata = false;
+                                break;
+                            }
+                            else if (cvp.ToLower() == "evet")
+                            {
+                                devam = true;
+                                hata = false;
+                            }
+                            else
+                            {
+                                Console.WriteLine("=> Lütfen sadece 'evet' ya da 'hayır' cevabını veriniz.");
+                            }
+                        }
+                    }
+                }
+                else if (islem == "3")
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Tarih        Başlık          Yapılacaklar");
+                    for (int i = 0; i < toDoList.Count; i++)
+                    {
+                        Console.WriteLine("------------------------------------------------------------");
+                        Console.WriteLine(toDoList[i]);
+                    }
+                    Console.WriteLine("------------------------------------------------------------");
+                    Console.WriteLine();
+                    Console.Write("Silmek istediğiniz id'yi girin: ");
+                    int id = int.Parse(Console.ReadLine());
+
+                    Console.Write($"{id} numaralı id'yi silmek istediğinizden emin misiniz? ");
+                    string eminMi = Console.ReadLine();
+                    if (eminMi.ToLower() == "evet")
+                    {
+                        toDoList.RemoveAt(id);
+                        int sayi2 = sayi - 1;
+                        sayi = sayi2;
+                        Console.WriteLine("Silme işlemi başarılı");
+                        Console.WriteLine();
+                    }
+                    else
+                    {
+                        Console.WriteLine("Beklenilmedik bir hata ile karşılaşıldı.");
+                        Console.WriteLine();
+                    }
+                }
+                else if (islem == "4")
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Tarih        Başlık          Yapılacaklar");
+                    for (int i = 0; i < toDoList.Count; i++)
+                    {
+                        Console.WriteLine("------------------------------------------------------------");
+                        Console.WriteLine(toDoList[i]);
+                    }
+                    Console.WriteLine("------------------------------------------------------------");
+                    Console.WriteLine();
+                    Console.Write("Güncellemek istediğiniz id'yi girin: ");
+                    int id = int.Parse(Console.ReadLine());
+                    Console.Write($"{id} numaralı id'yi güncellemek istediğinizden emin misiniz? ");
+                    string eminMi = Console.ReadLine();
+                    if (eminMi.ToLower() == "evet")
+                    {
+                        toDoList.RemoveAt(id);
+                        int sayi2 = sayi - 1;
+                        Console.WriteLine();
+                        Console.Write("Tarih: ");
+                        string date = Console.ReadLine();
+                        Console.Write("Başlık: ");
+                        string title = Console.ReadLine();
+                        Console.Write("Yapılacak: ");
+                        string body = Console.ReadLine();
+
+
+                        string toDo = $"id:{sayi2} '{date}'    <<{title}>>         {body}";
+                        toDoList.Add(toDo);
+                        sayi = sayi2;
+                        Console.WriteLine("Güncelleme işlemi başarılı");
+                        Console.WriteLine();
+                    }
+                    else
+                    {
+                        Console.WriteLine("Beklenilmedik bir hata ile karşılaşıldı.");
+                        Console.WriteLine();
+                    }
+
+
+                }
+
+
+            }
+        }
+    }
+}
