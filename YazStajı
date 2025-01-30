@@ -1,0 +1,47 @@
+1.Gün
+Havelsanda ilk gün tanışma ve oyantasyonla geçti. Mentörlerimiz ile tanışıp, yaptıkları işler hakkında konuştuk. 
+Bize uygun bir pozisyon vermek amacıyla bizim hangi dilleri ve teknolojileri bildiğimiz hakkında konuştuk. React ve 
+c# dilinde Asp.Net Entity Framwork ağırlıklı işler alabileceğimizi kararlaştırdık. Bazen ufak console projeleri de yapacağımızı öğrendik.
+Şirketteki en büyük avantajım şuan yapay zeka konusunda araştırmalar yapmamızdı yaptığımız işlerin yanında bu büyük bir artı oldu.
+
+2.Gün
+Console Projesini anlat ve biraz örnek koy
+
+3.Gün 
+Büyük veri setlerini düzenleyen React ile yaptığın tabloyu anlat
+
+4.Gün
+Tablonun ön yüzünü anlatmaya devam et
+
+5.Gün
+Login sayfasını anlat
+------------------------------------------------------------------------------------------------------------------------------------------------------
+6.Gün
+Büyük veri setlerini düzenleyen tablonun backend kısmını anlat. 
+
+7.Gün 
+Backende devam
+
+8.Gün
+Ön yüz kısmından verileri çekmek için api isteği gönderildi. Backend tarafında ise gelen isteğe karşılık verildi. Sayfalama işlemi yapıldı.
+
+9.Gün
+Başlangıç ve bitiş tarihi ile ilgili sorunlar çözüldü. Datapickerlara zaman aralığı girilince tabloda filtreleme işlemi yapıldı.
+
+10.Gün
+Yazılan her sözcük ile ilgili arama yapacak bir arama motoru yapıldı frontta istek olarak backende gönderildi ve backendde gerekli işlem yapıldı.
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+11.Gün 
+Zaten var olan bir projenin iyileştirme adımları yapılıyor.
+
+12.Gün
+Kalan iyileştirmeler yapıldı.
+
+13.Gün
+14.Gün
+15.Gün
+16.Gün
+17.Gün
+18.Gün
+19.Gün
+20.Gün
