@@ -1,0 +1,171 @@
+
+import React, { Component } from 'react'
+import '../Register/Register.css'
+
+export default class SignUp extends Component {
+
+    constructor(props) {
+        super(props)
+        this.onChangeFirstName = this.onChangeFirstName.bind(this);
+        this.onChangeLastName = this.onChangeLastName.bind(this);
+        this.onChangePhone = this.onChangePhone.bind(this);
+        this.onChangeUserEmail = this.onChangeUserEmail.bind(this);
+        this.onChangePassword = this.onChangePassword.bind(this);
+        this.onChangePasswordConfirmation = this.onChangePasswordConfirmation.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
+        this.state = {
+            first_name: '',
+            last_name: '',
+            phone: '',
+            email: '',
+            password: '',
+            password_confirmation: '',
+        }
+    }
+    onChangeFirstName(e) {
+        this.setState({ first_name: e.target.value })
+    }
+    onChangeLastName(e) {
+        this.setState({ last_name: e.target.value })
+    }
+    onChangePhone(e) {
+        this.setState({ phone: e.target.value })
+    }
+    onChangeUserEmail(e) {
+        this.setState({ email: e.target.value })
+    }
+    onChangePassword(e) {
+        this.setState({ password: e.target.value })
+    }
+    onChangePasswordConfirmation(e) {
+        this.setState({ password_confirmation: e.target.value })
+    }
+    onSubmit(e) {
+        e.preventDefault()
+
+    if(this.state.password.length<6 ){
+      alert("Şİfreniz 6 karakterden az olamaz")
+    }
+    if(this.state.password !== this.state.password_confirmation ){
+      alert("Şifre tekrarı şifre ile aynı olmalıdır")
+    }
+
+        const userObject = {
+            first_name: this.state.first_name,
+            last_name: this.state.last_name,
+            phone: this.state.phone,
+            email: this.state.email,
+            password: this.state.password,
+            password_confirmation: this.state.password_confirmation,
+        };
+        console.log(userObject);
+
+        // axios.post('http://127.0.0.1:8000/api/auth/register', userObject)
+        //     .then((res) => {
+        //        console.log(res,"aaaaaaaaaaa");
+        //         if(res.data.message === "User successfully registered"){
+        //             alert("Registration Successful")
+        //             window.location = "/sign-in";
+        //         }
+        //     }).catch((error) => {
+        //         if(error.response.data ===  "{\"email\":[\"The email has already been taken.\"]}"){
+        //           alert("The email has already been taken.")
+        //         }
+        //     });
+        // this.setState({ first_name: '', last_name: '', phone: '', email: '', password: '', password_confirmation: '' })
+    }
+
+
+  render() {
+    return (
+    <div className='App'>
+        {/* <Outernavbar/> */}
+        <div >
+            <div className="auth-inner">
+                <form onSubmit={this.onSubmit}className='login'>
+                <h3>Kaydol</h3>
+                    <div >
+                        <div className="mb-3">
+                        <label>Ad</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Adınız"
+                            onChange={this.onChangeFirstName}
+                            name="firstname"
+                            value={this.state.first_name}
+                        />
+                    
+                        <div className="mb-3">
+                        <label>Soyad</label>
+                        <input 
+                        type="text"
+                        className="form-control" 
+                        placeholder="Soyadınız" 
+                        onChange={this.onChangeLastName}
+                        name="lastname"
+                        value={this.state.last_name} />
+                        </div>
+
+                        <div className="mb-3">
+                        <label>Telefon Numarası</label>
+                        <input
+                            type="number"
+                            className="form-control"
+                            placeholder="Telefon numarasını"
+                            onChange={this.onChangePhone}
+                            name="phone"
+                            value={this.state.phone} 
+                        />
+                        </div>
+                        <div className="mb-3">
+                        <label>Email</label>
+                        <input
+                            type="email"
+                            className="form-control"
+                            placeholder="E-mail adresinizi giriniz"
+                            onChange={this.onChangeUserEmail}
+                            name="email"
+                            value={this.state.email}
+                        />
+                        </div>
+                        <div className="mb-3">
+                        <label>Şifre</label>
+                        <input
+                            type="password"
+                            className="form-control"
+                            placeholder="Şifre"
+                            onChange={this.onChangePassword}
+                            name="password"
+                            value={this.state.password}
+                        />
+                         </div>
+                        <div className="mb-3">
+                        <label>Şifre tekrar</label>
+                        <input
+                            type="password"
+                            className="form-control"
+                            placeholder="Şifre"
+                            onChange={this.onChangePasswordConfirmation}
+                            name="confirmpassword"
+                            value={this.state.password_confirmation}
+                        />
+                        </div>
+                        <div className="d-grid">
+                        <button type="submit" className="btn btn-primary">
+                            Kaydol
+                        </button>
+                        </div>
+                        <p className="forgot-password text-right">
+                        Daha önce kaydolmuş muydunuz <a href="/sign-in">Giriş Yap?</a>
+                        </p>
+                    </div>
+        
+        </div>
+      </form>
+      </div>
+      </div>
+    </div> 
+    )
+  }
+}
